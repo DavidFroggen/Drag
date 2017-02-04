@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    #div1 {
+        width: 200px;
+        height: 200px;
+        background: red;
+        position: absolute;
+    }
+    </style>
+    <script type="text/javascript">
+    window.onload = function() {
+        var oDiv = new Drag('div1');
+    }
+
+    function Drag(id) {
+        var _this = this;
+        this.disX = 0;
+        this.disY = 0;
+        this.oDiv = document.getElementById(id);
+        this.oDiv.onmousedown = function(ev) {
+            _this.fndown(ev);
+        };
+    }
+
+    Drag.prototype.fndown = function(ev) {
+
+
+        var ev = ev || event;
+        var _this = this;
+        this.disX = ev.clientX - this.oDiv.offsetLeft;
+        this.disY = ev.clientY - this.oDiv.offsetTop;
+        if (this.oDiv.setCapture) {
+            this.oDiv.setCapture();
+        }
+        document.onmousemove = function(ev) {
+            _this.fnmove(ev);
+        };
+        document.onmouseup = function() {
+            _this.fnup();
+        };
+        return false;
+    };
+
+    Drag.prototype.fnmove = function(ev) {
+        var ev = ev || event;
+        var L = ev.clientX - this.disX;
+        var T = ev.clientY - this.disY;
+
+        if (L < 0) {
+            L = 0
+        } else if (L > document.documentElement.clientWidth - this.oDiv.offsetWidth) {
+            L = document.documentElement.clientWidth - this.oDiv.offsetWidth
+        }
+        if (T < 0) {
+            T = 0
+        } else if (T > document.documentElement.clientHeight - this.oDiv.offsetHeight) {
+            T = document.documentElement.clientHeight - this.oDiv.offsetHeight
+        }
+        this.oDiv.style.left = L + 'px';
+        this.oDiv.style.top = T + 'px';
+    };
+
+
+
+
+    Drag.prototype.fnup = function() {
+        /*alert(1);*/
+        if (this.oDiv.releaseCapture) {
+            this.oDiv.releaseCapture();
+        }
+        document.onmouseup = null;
+        document.onmousemove = null;
+    };
+    </script>
+</head>
+
+<body>
+    <div id="div1"></div>
+</body>
+
+</html>
